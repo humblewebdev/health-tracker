@@ -1,4 +1,4 @@
-import { prisma } from '../../database/prisma';
+import prisma from '../../database/client';
 import nutritionService from '../nutrition/nutrition.service';
 import exerciseService from '../exercise/exercise.service';
 import waterService from '../water/water.service';
