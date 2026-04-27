@@ -1,0 +1,260 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+enum ActivityLevel {
+  SEDENTARY
+  LIGHTLY_ACTIVE
+  MODERATELY_ACTIVE
+  VERY_ACTIVE
+  EXTREMELY_ACTIVE
+}
+
+enum UnitSystem {
+  METRIC
+  IMPERIAL
+}
+
+enum WeightGoalType {
+  LOSE
+  MAINTAIN
+  GAIN
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+}
+
+enum ExerciseType {
+  CARDIO
+  STRENGTH
+  SPORTS
+  FLEXIBILITY
+  OTHER
+}
+
+enum Intensity {
+  LOW
+  MODERATE
+  HIGH
+  VERY_HIGH
+}
+
+enum MeasurementType {
+  WEIGHT
+  BODY_COMPOSITION
+  BODY_MEASUREMENTS
+}
+
+// Models
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String
+  firstName     String
+  lastName      String
+  dateOfBirth   DateTime?
+  gender        Gender?
+  height        Float?    // in cm
+  activityLevel ActivityLevel @default(MODERATELY_ACTIVE)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  preferences   UserPreferences?
+  foodEntries   FoodEntry[]
+  customFoods   CustomFood[]
+  exercises     Exercise[]
+  measurements  Measurement[]
+  waterIntakes  WaterIntake[]
+
+  @@index([email])
+}
+
+model UserPreferences {
+  id                String         @id @default(uuid())
+  userId            String         @unique
+  user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Nutrition goals
+  dailyCalorieGoal  Int            @default(2000)
+  dailyProteinGoal  Int            @default(150)  // grams
+  dailyCarbsGoal    Int            @default(200)  // grams
+  dailyFatsGoal     Int            @default(65)   // grams
+  dailyFiberGoal    Int            @default(25)   // grams
+
+  // Water goal
+  dailyWaterGoal    Int            @default(2000) // ml
+
+  // Weight goals
+  targetWeight      Float?         // in kg
+  weightGoalType    WeightGoalType @default(MAINTAIN)
+
+  // System preferences
+  unitSystem        UnitSystem     @default(METRIC)
+  timezone          String         @default("UTC")
+
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+}
+
+model FoodEntry {
+  id           String    @id @default(uuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date         DateTime  @db.Date
+  mealType     MealType
+  time         DateTime  @default(now())
+
+  // Food details
+  foodName     String
+  brand        String?
+  servingSize  Float
+  servingUnit  String
+
+  // Nutrition (per serving)
+  calories     Int
+  protein      Float     @default(0)
+  carbs        Float     @default(0)
+  fats         Float     @default(0)
+  fiber        Float     @default(0)
+  sugar        Float     @default(0)
+  sodium       Float     @default(0)  // mg
+
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([userId, date])
+  @@index([userId, mealType])
+}
+
+model CustomFood {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name         String
+  brand        String?
+  servingSize  Float
+  servingUnit  String
+
+  // Nutrition (per serving)
+  calories     Int
+  protein      Float    @default(0)
+  carbs        Float    @default(0)
+  fats         Float    @default(0)
+  fiber        Float    @default(0)
+  sugar        Float    @default(0)
+  sodium       Float    @default(0)
+
+  isPublic     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([userId])
+  @@index([name])
+}
+
+model Exercise {
+  id             String       @id @default(uuid())
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date           DateTime     @db.Date
+  time           DateTime     @default(now())
+  exerciseType   ExerciseType
+  name           String
+
+  // Common fields
+  duration       Int?         // minutes
+  caloriesBurned Int?
+  intensity      Intensity?
+
+  // Cardio specific
+  distance       Float?       // km
+  averageHeartRate Int?
+
+  // Strength specific
+  sets           Int?
+  reps           Int?
+  weight         Float?       // kg
+
+  notes          String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([userId, date])
+  @@index([userId, exerciseType])
+}
+
+model Measurement {
+  id               String          @id @default(uuid())
+  userId           String
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date             DateTime        @db.Date
+  measurementType  MeasurementType
+
+  // Weight measurements
+  weight           Float?          // kg
+  bmi              Float?
+
+  // Body composition
+  bodyFatPercent   Float?
+  muscleMass       Float?          // kg
+  boneMass         Float?          // kg
+  waterPercent     Float?
+
+  // Body measurements (in cm)
+  neck             Float?
+  shoulders        Float?
+  chest            Float?
+  waist            Float?
+  hips             Float?
+  leftThigh        Float?
+  rightThigh       Float?
+  leftArm          Float?
+  rightArm         Float?
+  leftCalf         Float?
+  rightCalf        Float?
+
+  notes            String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@index([userId, date])
+  @@index([userId, measurementType])
+}
+
+model WaterIntake {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date      DateTime @db.Date
+  time      DateTime @default(now())
+  amount    Int      // ml
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, date])
+}
