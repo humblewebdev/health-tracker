@@ -9,6 +9,8 @@ import measurementsRoutes from './modules/measurements/measurements.routes';
 import waterRoutes from './modules/water/water.routes';
 import exerciseRoutes from './modules/exercise/exercise.routes';
 import dashboardRoutes from './modules/dashboard/dashboard.routes';
+import recipeRoutes from './modules/recipes/recipe.routes';
+import mealPlanRoutes from './modules/meal-plans/meal-plan.routes';
 
 const app: Application = express();
 
@@ -60,6 +62,12 @@ app.use('/api/exercises', exerciseRoutes);
 
 // Dashboard routes
 app.use('/api/dashboard', dashboardRoutes);
+
+// Recipe routes
+app.use('/api/recipes', recipeRoutes);
+
+// Meal plan routes
+app.use('/api/meal-plans', mealPlanRoutes);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {

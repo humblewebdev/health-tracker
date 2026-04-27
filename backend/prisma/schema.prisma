@@ -62,6 +62,22 @@ enum MeasurementType {
   BODY_MEASUREMENTS
 }
 
+enum RecipeCategory {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+  DESSERT
+  SMOOTHIE
+  SALAD
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
 // Models
 model User {
   id            String    @id @default(uuid())
@@ -83,6 +99,8 @@ model User {
   exercises     Exercise[]
   measurements  Measurement[]
   waterIntakes  WaterIntake[]
+  recipes       Recipe[]
+  mealPlans     MealPlan[]
 
   @@index([email])
 }
@@ -257,4 +275,113 @@ model WaterIntake {
   updatedAt DateTime @updatedAt
 
   @@index([userId, date])
+}
+
+model Recipe {
+  id            String           @id @default(uuid())
+  name          String
+  description   String?
+  category      RecipeCategory
+  prepTime      Int              // minutes
+  cookTime      Int              // minutes
+  servings      Int              @default(1)
+  difficulty    Difficulty       @default(MEDIUM)
+
+  // Nutrition per serving
+  calories      Int
+  protein       Float
+  carbs         Float
+  fats          Float
+  fiber         Float?
+  sugar         Float?
+
+  // Recipe details
+  ingredients   RecipeIngredient[]
+  instructions  String[]
+  imageUrl      String?
+
+  // Dietary flags
+  isVegetarian  Boolean          @default(false)
+  isVegan       Boolean          @default(false)
+  isGlutenFree  Boolean          @default(false)
+  isDairyFree   Boolean          @default(false)
+  isKeto        Boolean          @default(false)
+  isPaleo       Boolean          @default(false)
+
+  // User customization
+  userId        String?          // null = system recipe
+  user          User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isPublic      Boolean          @default(false)
+
+  // Usage
+  mealPlans     MealPlanRecipe[]
+
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  @@index([category, userId])
+  @@index([isVegetarian, isVegan, isGlutenFree])
+  @@index([name])
+}
+
+model RecipeIngredient {
+  id         String  @id @default(uuid())
+  recipeId   String
+  recipe     Recipe  @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  name       String
+  amount     Float
+  unit       String
+  notes      String?
+
+  @@index([recipeId])
+}
+
+model MealPlan {
+  id             String           @id @default(uuid())
+  userId         String
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name           String
+  description    String?
+  startDate      DateTime         @db.Date
+  endDate        DateTime         @db.Date
+
+  // Target nutrition
+  targetCalories Int
+  targetProtein  Float
+  targetCarbs    Float
+  targetFats     Float
+
+  // Dietary preferences
+  dietaryTags    String[]         // ["vegetarian", "gluten-free"]
+  excludedFoods  String[]         // ["nuts", "seafood"]
+
+  // Meals
+  meals          MealPlanRecipe[]
+
+  isActive       Boolean          @default(false)
+  isTemplate     Boolean          @default(false)
+
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@index([userId, isActive])
+  @@index([userId, startDate, endDate])
+}
+
+model MealPlanRecipe {
+  id          String   @id @default(uuid())
+  mealPlanId  String
+  mealPlan    MealPlan @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+
+  recipeId    String
+  recipe      Recipe   @relation(fields: [recipeId], references: [id])
+
+  dayOfWeek   Int      // 0-6 (Sunday-Saturday)
+  mealType    MealType
+  servings    Float    @default(1)
+
+  @@index([mealPlanId])
+  @@index([recipeId])
 }

@@ -8,6 +8,9 @@ import FoodLog from './pages/FoodLog';
 import Measurements from './pages/Measurements';
 import Water from './pages/Water';
 import Exercise from './pages/Exercise';
+import MealPlansList from './pages/MealPlansList';
+import MealPlanGenerator from './pages/MealPlanGenerator';
+import MealPlanView from './pages/MealPlanView';
 import Settings from './pages/Settings';
 import ProtectedRoute from './components/common/ProtectedRoute';
 
@@ -66,6 +69,30 @@ function App() {
           element={
             <ProtectedRoute>
               <Exercise />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/meal-plans"
+          element={
+            <ProtectedRoute>
+              <MealPlansList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/meal-plans/generator"
+          element={
+            <ProtectedRoute>
+              <MealPlanGenerator />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/meal-plans/:id"
+          element={
+            <ProtectedRoute>
+              <MealPlanView />
             </ProtectedRoute>
           }
         />

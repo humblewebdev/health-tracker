@@ -12,13 +12,19 @@ export default function AppLayout({ children }: AppLayoutProps) {
   const navItems = [
     { path: '/dashboard', label: 'Dashboard' },
     { path: '/nutrition', label: 'Nutrition' },
+    { path: '/meal-plans', label: 'Meal Plans' },
     { path: '/exercise', label: 'Exercise' },
     { path: '/measurements', label: 'Measurements' },
     { path: '/water', label: 'Water' },
     { path: '/settings', label: 'Settings' },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+    if (path === '/meal-plans') {
+      return location.pathname.startsWith('/meal-plans');
+    }
+    return location.pathname === path;
+  };
 
   return (
     <div className="min-h-screen bg-gray-100">
