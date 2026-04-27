@@ -5,6 +5,9 @@ node_modules/
 
 # Testing
 coverage/
+frontend/e2e/fixtures/.auth-state.json
+frontend/playwright-report/
+frontend/test-results/
 
 # Production
 build/

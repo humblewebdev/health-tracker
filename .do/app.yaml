@@ -1,0 +1,80 @@
+name: health-tracker
+region: nyc
+
+# ── Static frontend (free tier) ──────────────────────────────────────────────
+static_sites:
+  - name: frontend
+    github:
+      repo: YOUR_GITHUB_USERNAME/health-tracker
+      branch: main
+      deploy_on_push: true
+    source_dir: /frontend
+    build_command: npm install && npm run build
+    output_dir: /dist
+    catchall_document: index.html
+    envs:
+      - key: VITE_API_URL
+        value: ${backend.PUBLIC_URL}/api
+        scope: BUILD_TIME
+
+# ── Backend API service ───────────────────────────────────────────────────────
+services:
+  - name: backend
+    github:
+      repo: YOUR_GITHUB_USERNAME/health-tracker
+      branch: main
+      deploy_on_push: true
+    source_dir: /backend
+    build_command: npm install && npx prisma generate && npm run build
+    run_command: npm start
+    environment_slug: node-js
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    http_port: 8080
+    health_check:
+      http_path: /health
+    envs:
+      - key: NODE_ENV
+        value: production
+        scope: RUN_TIME
+      - key: PORT
+        value: "8080"
+        scope: RUN_TIME
+      - key: DATABASE_URL
+        value: ${db.DATABASE_URL}
+        scope: RUN_TIME
+        type: SECRET
+      - key: JWT_SECRET
+        scope: RUN_TIME
+        type: SECRET
+      - key: JWT_REFRESH_SECRET
+        scope: RUN_TIME
+        type: SECRET
+      - key: CORS_ORIGIN
+        value: ${frontend.PUBLIC_URL}
+        scope: RUN_TIME
+
+# ── Pre-deploy migration job ──────────────────────────────────────────────────
+jobs:
+  - name: migrate
+    github:
+      repo: YOUR_GITHUB_USERNAME/health-tracker
+      branch: main
+    source_dir: /backend
+    build_command: npm install && npx prisma generate
+    run_command: npx prisma migrate deploy
+    kind: PRE_DEPLOY
+    instance_size_slug: basic-xxs
+    envs:
+      - key: DATABASE_URL
+        value: ${db.DATABASE_URL}
+        type: SECRET
+
+# ── Managed PostgreSQL database ───────────────────────────────────────────────
+databases:
+  - name: db
+    engine: PG
+    version: "15"
+    size: db-s-1vcpu-1gb
+    num_nodes: 1
+    production: true
