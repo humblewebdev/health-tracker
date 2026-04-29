@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "serve dist -l 8080 -s",
+    "start": "node server.js",
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
@@ -25,7 +25,6 @@
     "react-hook-form": "^7.49.3",
     "react-router-dom": "^6.21.3",
     "recharts": "^2.10.3",
-    "serve": "^14.2.6",
     "zod": "^3.22.4",
     "zustand": "^4.5.0"
   },
