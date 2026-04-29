@@ -9,7 +9,7 @@ static_sites:
       branch: main
       deploy_on_push: true
     source_dir: /frontend
-    build_command: npm install && npm run build
+    build_command: npm install --include=dev && npm run build
     output_dir: /dist
     catchall_document: index.html
     envs:
