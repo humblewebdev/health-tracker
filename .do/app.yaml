@@ -1,8 +1,9 @@
 name: health-tracker
 region: nyc
 
-# ── Static frontend (free tier) ──────────────────────────────────────────────
-static_sites:
+# ── Services ─────────────────────────────────────────────────────────────────
+services:
+  # Frontend web service (serves built React SPA via `serve`)
   - name: frontend
     github:
       repo: YOUR_GITHUB_USERNAME/health-tracker
@@ -10,15 +11,16 @@ static_sites:
       deploy_on_push: true
     source_dir: /frontend
     build_command: npm install --include=dev && npm run build
-    output_dir: /dist
-    catchall_document: index.html
+    run_command: npm start
+    environment_slug: node-js
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    http_port: 8080
     envs:
       - key: VITE_API_URL
         value: ${backend.PUBLIC_URL}/api
         scope: BUILD_TIME
 
-# ── Backend API service ───────────────────────────────────────────────────────
-services:
   - name: backend
     github:
       repo: YOUR_GITHUB_USERNAME/health-tracker
