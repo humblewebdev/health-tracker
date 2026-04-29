@@ -2,7 +2,6 @@ import prisma from '../../database/client';
 import nutritionService from '../nutrition/nutrition.service';
 import exerciseService from '../exercise/exercise.service';
 import waterService from '../water/water.service';
-import measurementsService from '../measurements/measurements.service';
 
 export interface DashboardData {
   date: string;
@@ -140,10 +139,10 @@ class DashboardService {
         totalProtein: nutritionSummary.totalProtein,
         totalCarbs: nutritionSummary.totalCarbs,
         totalFats: nutritionSummary.totalFats,
-        mealCount: nutritionSummary.mealBreakdown.breakfast.count +
-          nutritionSummary.mealBreakdown.lunch.count +
-          nutritionSummary.mealBreakdown.dinner.count +
-          nutritionSummary.mealBreakdown.snack.count,
+        mealCount: nutritionSummary.mealBreakdown.BREAKFAST.count +
+          nutritionSummary.mealBreakdown.LUNCH.count +
+          nutritionSummary.mealBreakdown.DINNER.count +
+          nutritionSummary.mealBreakdown.SNACK.count,
         goals: {
           calories: preferences?.dailyCalorieGoal || 2000,
           protein: preferences?.dailyProteinGoal || 150,

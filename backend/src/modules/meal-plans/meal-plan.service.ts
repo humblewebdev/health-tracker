@@ -1,8 +1,10 @@
 import prisma from '../../database/client';
-import { MealPlan, MealType } from '@prisma/client';
+import { MealPlan } from '@prisma/client';
+
+type MealPlanWithMeals = MealPlan & { meals: any[] };
 
 class MealPlanService {
-  async getMealPlans(userId: string): Promise<MealPlan[]> {
+  async getMealPlans(userId: string): Promise<MealPlanWithMeals[]> {
     return prisma.mealPlan.findMany({
       where: { userId },
       include: {
@@ -20,7 +22,7 @@ class MealPlanService {
     });
   }
 
-  async getMealPlan(id: string, userId: string): Promise<MealPlan> {
+  async getMealPlan(id: string, userId: string): Promise<MealPlanWithMeals> {
     const plan = await prisma.mealPlan.findFirst({
       where: { id, userId },
       include: {
@@ -44,7 +46,7 @@ class MealPlanService {
     return plan;
   }
 
-  async getActiveMealPlan(userId: string): Promise<MealPlan | null> {
+  async getActiveMealPlan(userId: string): Promise<MealPlanWithMeals | null> {
     return prisma.mealPlan.findFirst({
       where: { userId, isActive: true },
       include: {
