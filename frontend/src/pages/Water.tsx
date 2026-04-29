@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { format, addDays, subDays } from 'date-fns';
 import AppLayout from '../components/layout/AppLayout';
 import { waterService, WaterSummary } from '../services/water.service';
-import { WaterIntake } from '../types';
 
 export default function Water() {
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));

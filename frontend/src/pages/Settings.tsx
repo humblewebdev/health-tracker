@@ -4,7 +4,7 @@ import { UserPreferences } from '../types';
 import AppLayout from '../components/layout/AppLayout';
 
 export default function Settings() {
-  const [preferences, setPreferences] = useState<UserPreferences | null>(null);
+  const [_preferences, setPreferences] = useState<UserPreferences | null>(null);
   const [formData, setFormData] = useState<UpdatePreferencesData>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

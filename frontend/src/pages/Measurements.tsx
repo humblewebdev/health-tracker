@@ -11,7 +11,7 @@ export default function Measurements() {
   const [activeTab, setActiveTab] = useState<MeasurementTab>('weight');
   const [measurements, setMeasurements] = useState<Measurement[]>([]);
   const [loading, setLoading] = useState(false);
-  const [showWeightForm, setShowWeightForm] = useState(false);
+  const [_showWeightForm, setShowWeightForm] = useState(false);
 
   // Weight form
   const [weightFormData, setWeightFormData] = useState({
