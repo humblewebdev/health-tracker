@@ -8,6 +8,7 @@ export interface User {
   gender?: 'MALE' | 'FEMALE' | 'OTHER' | 'PREFER_NOT_TO_SAY';
   height?: number;
   activityLevel?: 'SEDENTARY' | 'LIGHTLY_ACTIVE' | 'MODERATELY_ACTIVE' | 'VERY_ACTIVE' | 'EXTREMELY_ACTIVE';
+  isAdmin?: boolean;
   createdAt: string;
   updatedAt: string;
 }

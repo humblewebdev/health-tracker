@@ -13,6 +13,9 @@ import MealPlanGenerator from './pages/MealPlanGenerator';
 import MealPlanView from './pages/MealPlanView';
 import Settings from './pages/Settings';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import AdminRoute from './components/common/AdminRoute';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminUsers from './pages/admin/AdminUsers';
 
 function App() {
   const { loadUser, isAuthenticated } = useAuthStore();
@@ -102,6 +105,22 @@ function App() {
             <ProtectedRoute>
               <Settings />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <AdminRoute>
+              <AdminUsers />
+            </AdminRoute>
           }
         />
         <Route path="*" element={<Navigate to="/" replace />} />

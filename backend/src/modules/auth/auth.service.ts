@@ -144,6 +144,7 @@ export class AuthService {
         gender: true,
         height: true,
         activityLevel: true,
+        isAdmin: true,
         createdAt: true,
         updatedAt: true,
       },

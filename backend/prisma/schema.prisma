@@ -89,6 +89,7 @@ model User {
   gender        Gender?
   height        Float?    // in cm
   activityLevel ActivityLevel @default(MODERATELY_ACTIVE)
+  isAdmin       Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

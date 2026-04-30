@@ -11,6 +11,8 @@ import exerciseRoutes from './modules/exercise/exercise.routes';
 import dashboardRoutes from './modules/dashboard/dashboard.routes';
 import recipeRoutes from './modules/recipes/recipe.routes';
 import mealPlanRoutes from './modules/meal-plans/meal-plan.routes';
+import adminRoutes from './modules/admin/admin.routes';
+import { authenticate } from './middleware/auth.middleware';
 
 const app: Application = express();
 
@@ -68,6 +70,9 @@ app.use('/api/recipes', recipeRoutes);
 
 // Meal plan routes
 app.use('/api/meal-plans', mealPlanRoutes);
+
+// Admin routes
+app.use('/api/admin', authenticate, adminRoutes);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {
